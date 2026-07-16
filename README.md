@@ -1,2 +1,105 @@
-# logi-route-project
-Sistema de triagem, cálculo de frete dinâmico e rastreabilidade de rotas de entrega baseado no ViaCEP.
+# 🗺️ LogiRoute Project
+
+> Sistema de triagem, cálculo de frete dinâmico e rastreabilidade de rotas de entrega baseado no ViaCEP.
+
+O **LogiRoute** é uma API REST desenvolvida em Java com Spring Boot, estruturada sob os princípios de **Clean Architecture** (Arquitetura Limpa). O objetivo principal é receber dados de pacotes, consultar informações de endereço através da API do ViaCEP, determinar a região logística (Zona/Região), calcular o frete dinamicamente com base em regras de peso/região, indicar a transportadora parceira ideal e registrar um histórico completo de consultas para fins de auditoria.
+
+---
+
+## 🛠️ Tecnologias Utilizadas
+
+![](https://img.shields.io/badge/Java-21-7B62A3?style=for-the-badge)
+![](https://img.shields.io/badge/SpringBoot-3.x-7B62A3?style=for-the-badge)
+![](https://img.shields.io/badge/Spring%20Data%20JPA-PostgreSQL-7B62A3?style=for-the-badge)
+![](https://img.shields.io/badge/Mockito-JUnit-7B62A3?style=for-the-badge)
+![](https://img.shields.io/badge/Jackson-7B62A3?style=for-the-badge)
+![](https://img.shields.io/badge/Docker-Docker%20Compose-7B62A3?style=for-the-badge)
+
+---
+
+## 📐 Desenho da Solução (Arquitetura)
+
+A aplicação foi desenhada seguindo os conceitos de **Clean Architecture** e isolamento de domínios. Isso garante que as regras de negócio fiquem completamente independentes de frameworks externos (como o Spring), bancos de dados ou APIs de terceiros.
+
+### Diagrama de Fluxo de Dados:
+```mermaid
+graph TD
+    %% Texto em preto (color:#000)
+    classDef client fill:#ececff,stroke:#9370db,stroke-width:2px,rx:10px,color:#000;
+    classDef controller fill:#e1f5fe,stroke:#03a9f4,stroke-width:2px,rx:8px,color:#000;
+    classDef service fill:#fff9c4,stroke:#fbc02d,stroke-width:2px,color:#000;
+    classDef gateway fill:#e8f5e9,stroke:#4caf50,stroke-width:2px,color:#000;
+    classDef db fill:#ffebee,stroke:#f44336,stroke-width:2px,color:#000;
+
+    %% Elementos do Gráfico
+    Client[📱 Cliente / Apidog]:::client -->|POST /pacotes| Controller[⚙️ TriagemController]:::controller
+    
+    Controller -->|Sanitização e Validação do CEP| Service{🧠 TriagemService}:::service
+    
+    Service -->|1. Consulta CEP| Gateway[🔌 CepGateway]:::gateway
+    Gateway -->|2. Request| ViaCEP([☁️ API ViaCEP]):::gateway
+    ViaCEP -->|3. Retorna Endereço| Gateway
+    
+    Service -->|4. Obtém Região/Regras| Enum[📋 Regiao Enum]:::service
+    Service -->|5. Calcula Frete| Frete(💵 Peso * TaxaKg + TaxaFixa):::service
+    
+    Service -->|6. Salva Log| LogGateway[💾 LogGateway]:::gateway
+    LogGateway -->|Persiste| DB[(🗄️ PostgreSQL Docker)]:::db
+    
+    Service -->|7. Retorna JSON| Response[📦 PacoteResponse]:::controller
+```
+
+### Componentes Principais:
+1. **Domain (`domain`)**: Contém as regras puras de negócio. O Enum `Regiao` centraliza as taxas, prazos e transportadoras de cada região brasileira, evitando regras espalhadas no código. A entidade `ConsultaLog` modela o registro histórico.
+2. **Gateways (`gateway` / `domain`)**: Interfaces que definem as fronteiras do sistema para comunicação com o mundo externo (ViaCEP e Banco de Dados).
+3. **Infrastructure (`infrastructure`)**: Configurações de banco de dados, exceptions
+
+## 🚀 Executando o Projeto
+
+### Pré-requisitos
+* Docker instalado na máquina.
+* Java 21+ instalado.
+
+### Passo 1: Subir o Banco de Dados (Docker)
+Na raiz do projeto (onde está o arquivo `docker-compose.yml`), execute:
+```bash
+docker-compose up -d
+```
+### Passo 2: Rodar a Aplicação Spring Boot
+Você pode rodar diretamente pela sua IDE (como o IntelliJ) ou pela linha de comando:
+```bash
+./mvnw spring-boot:run
+```
+
+### Passo 3: Rodar a Suíte de Testes
+Para rodar todos os testes unitários, de integração e validações com Mockito:
+```bash
+./mvnw test
+```
+
+## 📌 Endpoints Principais
+
+### 1. Executar Triagem de Pacote
+- Rota: POST /pacotes
+- Payload de Entrada:
+```JSON
+{
+  "cep": "23075-180",
+  "peso": 20
+}
+```
+- Resposta esperada: 201 - Created:
+```JSON
+{
+  "cep": "23075-180",
+  "uf": "RJ",
+  "localidade": "Rio de Janeiro",
+  "zona": "Sudeste",
+  "transportadora": "LogiExpress Sudeste",
+  "prazoDiasUteis": 2,
+  "valorFrete": 120.00
+}
+```
+
+## 👩‍💻 Autor
+- Desenvolvido por [@priscyladepaula](https://www.linkedin.com/in/priscyladepaula/)
