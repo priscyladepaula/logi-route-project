@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: logiroute-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: logi_route
+      POSTGRES_USER: logiroute
+      POSTGRES_PASSWORD: logiroute
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  wiremock:
+    image: wiremock/wiremock:latest
+    container_name: wiremock-service
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./wiremock:/home/wiremock
+
+  app:
+    build: .
+    container_name: java_springboot_app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+      - wiremock
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/logi_route
+      SPRING_DATASOURCE_USERNAME: logiroute
+      SPRING_DATASOURCE_PASSWORD: logiroute
+
+volumes:
+  pgdata:
