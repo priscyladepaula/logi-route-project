@@ -1,1 +1,17 @@
+br\com\priscyladepaula\logirouteproject\infrastructure\viacep\ViaCepClient.class
+br\com\priscyladepaula\logirouteproject\infrastructure\exception\TratadorDeErros.class
+br\com\priscyladepaula\logirouteproject\domain\ConsultaLog.class
+br\com\priscyladepaula\logirouteproject\dto\PacoteRequest.class
+br\com\priscyladepaula\logirouteproject\service\TriagemService.class
+br\com\priscyladepaula\logirouteproject\dto\ErroFormularioDto.class
+br\com\priscyladepaula\logirouteproject\infrastructure\exception\CepNaoEncontradoException.class
+br\com\priscyladepaula\logirouteproject\domain\LogGateway.class
+br\com\priscyladepaula\logirouteproject\infrastructure\database\DatabaseLogRepository.class
+br\com\priscyladepaula\logirouteproject\gateway\CepGateway.class
+br\com\priscyladepaula\logirouteproject\infrastructure\database\DataLogRepository.class
+br\com\priscyladepaula\logirouteproject\domain\Regiao.class
 br\com\priscyladepaula\logirouteproject\LogiRouteProjectApplication.class
+br\com\priscyladepaula\logirouteproject\config\AppConfig.class
+br\com\priscyladepaula\logirouteproject\dto\CepResponse.class
+br\com\priscyladepaula\logirouteproject\controller\PacoteController.class
+br\com\priscyladepaula\logirouteproject\dto\PacoteResponse.class
