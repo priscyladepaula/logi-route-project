@@ -8,7 +8,7 @@ O **LogiRoute** é uma API REST desenvolvida em Java com Spring Boot, estruturad
 
 ## 🛠️ Tecnologias Utilizadas
 
-![](https://img.shields.io/badge/Java-21-7B62A3?style=for-the-badge)
+![](https://img.shields.io/badge/Java-17-7B62A3?style=for-the-badge)
 ![](https://img.shields.io/badge/SpringBoot-3.x-7B62A3?style=for-the-badge)
 ![](https://img.shields.io/badge/Spring%20Data%20JPA-PostgreSQL-7B62A3?style=for-the-badge)
 ![](https://img.shields.io/badge/Mockito-JUnit-7B62A3?style=for-the-badge)
