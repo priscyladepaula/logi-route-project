@@ -39,7 +39,7 @@ public class TriagemService {
             throw new CepNaoEncontradoException(cepLimpo);
         }
 
-        String uf = cepDados.uf();
+        String uf = cepDados.uf().trim().toUpperCase();
 
         String zona = determinarZona(uf);
         String transportadora = determinarTransportadora(uf);
@@ -47,7 +47,7 @@ public class TriagemService {
 
         BigDecimal valorFrete = calcularFrete(uf, BigDecimal.valueOf(request.getPeso()));
 
-        salvarConsultaLog(cepDados, valorFrete, transportadora);
+        salvarConsultaLog(cepDados, valorFrete, transportadora, zona);
 
         return new PacoteResponse(
                 cepDados.cep(),
@@ -56,8 +56,7 @@ public class TriagemService {
                 zona,
                 transportadora,
                 prazo,
-                valorFrete
-        );
+                valorFrete);
     }
 
     private BigDecimal calcularFrete(String uf, BigDecimal peso) {
@@ -69,7 +68,8 @@ public class TriagemService {
     }
 
     private String determinarZona(String uf) {
-        return Regiao.obterPorUf(uf).getNome();
+        Regiao regiao = Regiao.obterPorUf(uf);
+        return regiao != null ? regiao.getNome() : null;
     }
 
     private String determinarTransportadora(String uf) {
@@ -77,17 +77,32 @@ public class TriagemService {
     }
 
     public List<ConsultaLog> listarHistorico() {
-        return logGateway.buscarTodos();
+        List<ConsultaLog> historico = logGateway.buscarTodos();
+
+        if (historico.isEmpty()) {
+            System.out.println("DEBUG - Histórico vazio.");
+        } else {
+            historico.forEach(log -> {
+                System.out.println(
+                        "DEBUG - Recuperado do Banco. ID: " + log.getId() + " | Zona recuperada: " + log.getZona());
+            });
+        }
+
+        return historico;
     }
 
-    private void salvarConsultaLog(CepResponse cepDados, BigDecimal valorFrete, String transportadora) {
+    private void salvarConsultaLog(CepResponse cepDados, BigDecimal valorFrete, String transportadora, String zona) {
         ConsultaLog log = new ConsultaLog();
         log.setCep(cepDados.cep());
         log.setUf(cepDados.uf());
         log.setLocalidade(cepDados.localidade());
         log.setValorFrete(valorFrete);
         log.setTransportadora(transportadora);
+        log.setZona(zona);
         log.setDataHora(LocalDateTime.now());
+
+        System.out
+                .println("DEBUG - Salvando log. CEP: " + log.getCep() + " | Zona que vai pro banco: " + log.getZona());
 
         logGateway.salvar(log);
     }

@@ -54,52 +54,49 @@ graph TD
 2. **Gateways (`gateway` / `domain`)**: Interfaces que definem as fronteiras do sistema para comunicação com o mundo externo (ViaCEP e Banco de Dados).
 3. **Infrastructure (`infrastructure`)**: Configurações de banco de dados, exceptions
 
-## 🚀 Executando o Projeto
+## 🌐 Demonstração da API em Produção
+* **🚀 Link da API em Produção:** `https://logi-route-project.onrender.com`
+> ⚠️ Como a aplicação está hospedada na camada gratuita do Render, a primeira requisição após minutos de inatividade, pode levar cerca de 50 segundos ou mais para responder.
 
-### Pré-requisitos
-* Docker instalado na máquina.
-* Java 21+ instalado.
-
-### Passo 1: Subir o Banco de Dados (Docker)
-Na raiz do projeto (onde está o arquivo `docker-compose.yml`), execute:
-```bash
-docker-compose up -d
-```
-### Passo 2: Rodar a Aplicação Spring Boot
-Você pode rodar diretamente pela sua IDE (como o IntelliJ) ou pela linha de comando:
-```bash
-./mvnw spring-boot:run
-```
-
-### Passo 3: Rodar a Suíte de Testes
-Para rodar todos os testes unitários, de integração e validações com Mockito:
-```bash
-./mvnw test
-```
-
-## 📌 Endpoints Principais
-
-### 1. Executar Triagem de Pacote
-- Rota: POST /pacotes
-- Payload de Entrada:
+### 🧪 Testando a API em Produção
+#### 1. Executar Triagem
+* **Endpoint:** `POST https://logi-route-project.onrender.com/pacotes`
+* **Payload de entrada:**
 ```JSON
 {
-  "cep": "23075-180",
+  "cep": "06040100",
   "peso": 20
 }
 ```
-- Resposta esperada: 201 - Created:
+* **Resposta esperada - 201 Created:**
 ```JSON
 {
-  "cep": "23075-180",
-  "uf": "RJ",
-  "localidade": "Rio de Janeiro",
-  "zona": "Sudeste",
-  "transportadora": "LogiExpress Sudeste",
-  "prazoDiasUteis": 2,
-  "valorFrete": 120.00
+    "cep": "06040-100",
+    "uf": "SP",
+    "localidade": "Osasco",
+    "zona": "Sudeste",
+    "transportadora": "LogiExpress Sudeste",
+    "prazoDiasUteis": 2,
+    "valorFrete": 120.00
 }
 ```
-
+#### 2. Consultar histórico
+* **Endpoint:** `GET https://logi-route-project.onrender.com/pacotes/logs`
+* **Resposta esperada - 200 OK:**
+```JSON
+[
+    {
+        "uf": "SP",
+        "localidade": "Osasco",
+        "dataHora": "16/07/2026 19:15:21",
+        "valorFrete": 120.00,
+        "zona": "Sudeste",
+        "transportadora": "LogiExpress Sudeste",
+        "cep": "06040-100",
+        "id": 1
+    }
+]
+```
+---
 ## 👩‍💻 Autor
 - Desenvolvido por [@priscyladepaula](https://www.linkedin.com/in/priscyladepaula/)
