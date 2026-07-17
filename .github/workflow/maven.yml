@@ -37,3 +37,7 @@ jobs:
 
       - name: Build and Run Tests with Maven
         run: ./mvnw clean test
+
+      - name: Trigger Render Deploy
+        if: github.ref == 'refs/heads/main' && success()
+        run: curl -f "${{ secrets.RENDER_DEPLOY_HOOK }}"
