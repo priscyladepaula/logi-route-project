@@ -97,6 +97,7 @@ graph TD
     }
 ]
 ```
+> ⚠️ A máquina do servidor no Render roda em UTC, o retorno da consulta pode retornar com o fuso horário diferente.
 ---
 ## 👩‍💻 Autor
 - Desenvolvido por [@priscyladepaula](https://www.linkedin.com/in/priscyladepaula/)
