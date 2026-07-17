@@ -79,15 +79,6 @@ public class TriagemService {
     public List<ConsultaLog> listarHistorico() {
         List<ConsultaLog> historico = logGateway.buscarTodos();
 
-        if (historico.isEmpty()) {
-            System.out.println("DEBUG - Histórico vazio.");
-        } else {
-            historico.forEach(log -> {
-                System.out.println(
-                        "DEBUG - Recuperado do Banco. ID: " + log.getId() + " | Zona recuperada: " + log.getZona());
-            });
-        }
-
         return historico;
     }
 
@@ -100,9 +91,6 @@ public class TriagemService {
         log.setTransportadora(transportadora);
         log.setZona(zona);
         log.setDataHora(LocalDateTime.now());
-
-        System.out
-                .println("DEBUG - Salvando log. CEP: " + log.getCep() + " | Zona que vai pro banco: " + log.getZona());
 
         logGateway.salvar(log);
     }
